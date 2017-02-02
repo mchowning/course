@@ -95,11 +95,17 @@ sequenceId ::
   [Id a]
   -> Id [a]
 sequenceId =
-  foldr (\a as ->
-    bindId (\a' ->
-    bindId (\as' ->
-    pureId (a' : as')) as) a)
-  (pureId [])
+--   foldr (\a as ->
+--     bindId (\a' ->
+--     bindId (\as' ->
+--     pureId (a' : as')) as) a)
+--   (pureId [])
+
+  foldr helper (pureId [])
+    where
+      helper a as = bindId (\a' ->
+                    bindId (\as' -> pureId (a' : as')) as) a
+
 
 ----
 

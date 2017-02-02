@@ -61,8 +61,10 @@ the contents of c
 -- /Tip:/ use @getArgs@ and @run@
 main ::
   IO ()
-main =
-  error "todo: Course.FileIO#main"
+main = do args <- getArgs
+          case args of
+            fn :. Nil -> run fn
+            _         -> putStrLn "usage: runhaskell FileIO.hs filename"
 
 type FilePath =
   Chars
@@ -71,31 +73,46 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run fp = do content <- readFile fp
+            results <- getFiles $ lines content
+            printFiles results
 
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+getFiles = sequence . map getFile
+-- getFiles = mapM getFile
+-- getFiles = sequence . (<$>) getFile
+-- getFiles = foldRight helper (return Nil)
+--   where
+--     helper :: FilePath -> IO (List (FilePath, Chars)) -> IO (List (FilePath, Chars))
+--     helper fp ls = do tup <- getFile fp
+--                       ls' <- ls
+--                       return $ tup :. ls'
 
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile fp = do cs <- readFile fp
+                return (fp, cs)
+-- getFile fp = readFile fp >>= \cs -> return (fp, cs)
 
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+printFiles = void . sequence . map (uncurry printFile)
+-- printFiles = void . mapM (uncurry printFile)
+-- printFiles = foldLeft helper (return ())
+--   where
+--     helper :: IO () -> (FilePath, Chars) -> IO ()
+--     helper _ = void . uncurry printFile
 
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile fp cs = do putStrLn ("============ " ++ fp)
+                     putStrLn cs
+-- printFile fp cs = putStrLn ("============ " ++ fp) >>
+--                   putStrLn cs
 
